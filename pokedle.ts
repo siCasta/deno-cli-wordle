@@ -1,12 +1,21 @@
+import { colorLetter } from './colors.ts'
+
 const MAX_TRIES = 6
+const POKEMONS_AVAILABLE = 905
+
 const previousGuesses: Array<string> = []
+const randomId = Math.ceil(Math.random() * (POKEMONS_AVAILABLE - 1))
+
+const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
+    .then(res => res.json())
+    .then(res => res.name.toUpperCase())
 
 let globalResults = ''
-const pokemon = 'pikachu'
-let tries = 0
 
 function askWord() {
-    const response = prompt('The pokemon is: ')
+    const response = prompt('The pokemon is: ')?.toUpperCase()
+
+    console.clear()
 
     if (response == null) {
         return { error: '💭 You must provide a posible pokemon name' }
@@ -23,11 +32,26 @@ function askWord() {
 
 function print(guess: string) {
     console.clear()
+
+    let results = ''
+
+    const letters: Array<string> = [...guess]
+
+    letters.forEach((letter, index) => {
+        if (letter === pokemon[index]) {
+            results += colorLetter('green', letter)
+        } else if (pokemon.includes(letter)) {
+            results += colorLetter('yellow', letter)
+        } else {
+            results += colorLetter('gray', letter)
+        }
+    })
+
+    globalResults += `${results} \n\n`
+    console.log(globalResults)
 }
 
 function start(tries: number) {
-    const { length } = pokemon
-
     if (tries >= MAX_TRIES) {
         console.log('%c💔 You lost!', 'color: red')
         console.log(`%cThe pokemon was ${pokemon}`, 'color: red')
@@ -57,4 +81,7 @@ function start(tries: number) {
     }
 }
 
-start(tries)
+console.clear()
+console.log(`%c🎉 Welcome to the pokemon game!`, 'color: blue')
+console.log(`%c💡 Hint: the pokemon name is ${pokemon.length} characthers long \n\n`, 'color: yellow')
+start(0)
