@@ -26,8 +26,8 @@ function askWord() {
         return { error: `📏 The pokemon name must be ${pokemon.length} characthers long` }
     } else if (previousGuesses.includes(response)) {
         return { error: '📝 You already tried this pokemon name' }
-    } else if (!/^[a-zA-Z/-]+$/.test(response)) {
-        return { error: '📝 The pokemon name must contain letters' }
+    } else if (!/^[a-zA-Z-]+$/.test(response)) {
+        return { error: '📝 The pokemon name must contain letters or dash' }
     }
 
     return { response }
