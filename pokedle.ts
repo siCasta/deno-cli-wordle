@@ -1,14 +1,17 @@
 import { colorLetter } from './colors.ts'
 
 const MAX_TRIES = 6
-const POKEMONS_AVAILABLE = 905
 
 const previousGuesses: Array<string> = []
-const randomId = Math.ceil(Math.random() * (POKEMONS_AVAILABLE - 1))
 
-const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
+const pokemons = await fetch('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1154')
     .then(res => res.json())
-    .then(res => res.name.toUpperCase())
+    .then(res => res.results)
+
+console.log(pokemons)
+const randomId = Math.floor(Math.random() * pokemons.length)
+const pokemon = pokemons[randomId].name.toUpperCase()
+
 
 let globalResults = ''
 
@@ -23,7 +26,7 @@ function askWord() {
         return { error: `📏 The pokemon name must be ${pokemon.length} characthers long` }
     } else if (previousGuesses.includes(response)) {
         return { error: '📝 You already tried this pokemon name' }
-    } else if (!/^[a-zA-Z]+$/.test(response)) {
+    } else if (!/^[a-zA-Z/-]+$/.test(response)) {
         return { error: '📝 The pokemon name must contain letters' }
     }
 
